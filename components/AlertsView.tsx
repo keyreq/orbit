@@ -82,7 +82,7 @@ export const AlertsView: React.FC = () => {
       setAlerts(alerts.map(a => a.id === id ? updated : a));
     } catch (err) {
       console.error('Failed to toggle alert:', err);
-      alert(err instanceof Error ? err.message : 'Failed to toggle alert');
+      window.alert(err instanceof Error ? err.message : 'Failed to toggle alert');
     }
   };
 
@@ -96,7 +96,7 @@ export const AlertsView: React.FC = () => {
       setAlerts(alerts.filter(a => a.id !== id));
     } catch (err) {
       console.error('Failed to delete alert:', err);
-      alert(err instanceof Error ? err.message : 'Failed to delete alert');
+      window.alert(err instanceof Error ? err.message : 'Failed to delete alert');
     }
   };
 
@@ -140,12 +140,12 @@ export const AlertsView: React.FC = () => {
 
       if (response.ok) {
         setShowQuickSetup(false);
-        alert('Contact info saved! You can now receive notifications.');
+        window.alert('Contact info saved! You can now receive notifications.');
       } else {
-        alert('Failed to save contact info');
+        window.alert('Failed to save contact info');
       }
     } catch (err) {
-      alert('Error saving contact info');
+      window.alert('Error saving contact info');
     } finally {
       setSavingQuick(false);
     }
