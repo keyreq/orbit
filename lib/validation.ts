@@ -46,7 +46,7 @@ export const AlertCreateSchema = z.object({
     .trim(),
 
   condition: z.enum(['above', 'below'], {
-    errorMap: () => ({ message: 'Condition must be "above" or "below"' })
+    message: 'Condition must be "above" or "below"'
   }),
 
   targetPrice: z
