@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(npm audit:*)",
+      "Bash(npm i:*)",
+      "Bash(npm install:*)",
+      "Bash(timeout 10 npm run dev:*)",
+      "Bash(npm run setup-db:*)",
+      "Bash(if not exist .env.local copy .env.example .env.local)",
+      "Bash(copy:*)",
+      "Bash(openssl rand:*)",
+      "Bash(findstr:*)",
+      "Bash(echo:*)",
+      "Bash(nslookup:*)",
+      "Bash(docker:*)",
+      "Bash(timeout /t 5 /nobreak)",
+      "Bash(npm run dev)",
+      "Bash(timeout /t 10 /nobreak)",
+      "Bash(ping:*)",
+      "Bash(netstat:*)",
+      "Bash(taskkill:*)",
+      "Bash(npm run test:notifications:*)",
+      "Bash(dir:*)",
+      "Bash(npm run worker:*)",
+      "Bash(curl:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git reset:*)"
+    ]
+  }
+}
