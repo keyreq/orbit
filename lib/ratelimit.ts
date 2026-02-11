@@ -442,6 +442,7 @@ function createRateLimitResponse(result: RateLimitResult) {
 
 export {
   checkRateLimit as default,
+  checkRateLimit,
   getStore,
   getIdentifier,
   getRateLimitHeaders,
