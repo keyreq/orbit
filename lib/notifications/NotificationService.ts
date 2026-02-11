@@ -16,14 +16,13 @@ export class NotificationService {
   private channels: Map<string, NotificationChannel>
 
   constructor() {
-    this.channels = new Map([
-      ['in-app', new InAppNotificationChannel()],
-      ['email', new EmailNotificationChannel()],
-      ['sms', new SMSNotificationChannel()],
-      ['phone', new PhoneNotificationChannel()],
-      ['telegram', new TelegramNotificationChannel()],
-      ['slack', new SlackNotificationChannel()],
-    ])
+    this.channels = new Map<string, NotificationChannel>()
+    this.channels.set('in-app', new InAppNotificationChannel())
+    this.channels.set('email', new EmailNotificationChannel())
+    this.channels.set('sms', new SMSNotificationChannel())
+    this.channels.set('phone', new PhoneNotificationChannel())
+    this.channels.set('telegram', new TelegramNotificationChannel())
+    this.channels.set('slack', new SlackNotificationChannel())
   }
 
   /**
