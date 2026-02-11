@@ -4,15 +4,6 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "regions": ["iad1"],
-  "env": {
-    "MONGODB_URI": "@mongodb_uri",
-    "COINGECKO_API_KEY": "@coingecko_api_key",
-    "GOOGLE_GEMINI_API_KEY": "@google_gemini_api_key",
-    "RESEND_API_KEY": "@resend_api_key",
-    "TWILIO_ACCOUNT_SID": "@twilio_account_sid",
-    "TWILIO_AUTH_TOKEN": "@twilio_auth_token",
-    "TWILIO_PHONE_NUMBER": "@twilio_phone_number"
-  },
   "headers": [
     {
       "source": "/manifest.json",
