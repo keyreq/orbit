@@ -446,7 +446,6 @@ export {
   getIdentifier,
   getRateLimitHeaders,
   createRateLimitResponse,
-  RATE_LIMITS,
 }
 
 // ============================================================================
