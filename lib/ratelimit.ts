@@ -204,13 +204,8 @@ function getStore() {
 }
 
 // Cleanup interval for memory store (every 5 minutes)
-if (store instanceof MemoryRateLimitStore) {
-  setInterval(() => {
-    if (store instanceof MemoryRateLimitStore) {
-      store.cleanup()
-    }
-  }, 5 * 60 * 1000)
-}
+// Note: Cleanup runs automatically when getRateLimitStore() is called
+// periodically through API requests. Manual interval not needed in serverless.
 
 // ============================================================================
 // RATE LIMIT PRESETS
