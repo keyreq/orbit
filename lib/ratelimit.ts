@@ -373,7 +373,7 @@ function getIdentifier(
  * @param config - Rate limit configuration
  * @returns Rate limit result
  */
-export async function checkRateLimit(
+async function checkRateLimit(
   request: NextRequest,
   config: RateLimitConfig = RATE_LIMITS.GLOBAL
 ): Promise<RateLimitResult> {
@@ -394,7 +394,7 @@ export async function checkRateLimit(
  * @param result - Rate limit result
  * @returns Headers object
  */
-export function getRateLimitHeaders(result: RateLimitResult): Record<string, string> {
+function getRateLimitHeaders(result: RateLimitResult): Record<string, string> {
   const headers: Record<string, string> = {
     'X-RateLimit-Limit': result.limit.toString(),
     'X-RateLimit-Remaining': result.remaining.toString(),
@@ -416,7 +416,7 @@ export function getRateLimitHeaders(result: RateLimitResult): Record<string, str
  * @param result - Rate limit result
  * @returns NextResponse with 429 status
  */
-export function createRateLimitResponse(result: RateLimitResult) {
+function createRateLimitResponse(result: RateLimitResult) {
   return new Response(
     JSON.stringify({
       success: false,
