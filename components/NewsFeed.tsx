@@ -8,9 +8,34 @@ export const NewsFeed: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [macroAnalysis, setMacroAnalysis] = useState<string>('');
+  const [macroLoading, setMacroLoading] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
+
+    // Fetch comprehensive macro analysis from Daily Brief
+    const fetchMacroAnalysis = async () => {
+      setMacroLoading(true);
+      try {
+        const response = await fetch('/api/daily-brief');
+        const data = await response.json();
+        if (isMounted && data.success) {
+          setMacroAnalysis(data.data.brief);
+        }
+      } catch (err) {
+        console.error('Macro analysis error:', err);
+        if (isMounted) {
+          setMacroAnalysis('*Macro analysis temporarily unavailable. Check back shortly.*');
+        }
+      } finally {
+        if (isMounted) {
+          setMacroLoading(false);
+        }
+      }
+    };
+
+    // Fetch news
     const fetchNews = async () => {
       setLoading(true);
       setError(null);
@@ -55,6 +80,8 @@ export const NewsFeed: React.FC = () => {
         }
       }
     };
+
+    fetchMacroAnalysis();
     fetchNews();
     return () => { isMounted = false; };
   }, [refreshKey, query]);
@@ -107,6 +134,33 @@ export const NewsFeed: React.FC = () => {
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
           </button>
         </form>
+      </div>
+
+      {/* Macro Analysis Section */}
+      <div className="max-w-5xl mx-auto mb-8">
+        <div className="glass-panel p-6 rounded-2xl border border-orbit-accent/30">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-white flex items-center">
+              <TrendingUp className="w-5 h-5 mr-2 text-orbit-accent" />
+              Daily Market Intelligence Brief
+            </h2>
+            {macroLoading && <Loader2 className="w-4 h-4 animate-spin text-orbit-accent" />}
+          </div>
+
+          {macroLoading ? (
+            <div className="space-y-3 animate-pulse">
+              <div className="h-4 bg-orbit-600 rounded w-full"></div>
+              <div className="h-4 bg-orbit-600 rounded w-5/6"></div>
+              <div className="h-4 bg-orbit-600 rounded w-4/6"></div>
+            </div>
+          ) : macroAnalysis ? (
+            <div className="prose prose-invert prose-sm max-w-none text-gray-300 leading-relaxed">
+              <div className="whitespace-pre-wrap font-mono text-sm">{macroAnalysis}</div>
+            </div>
+          ) : (
+            <p className="text-gray-500 text-sm">Macro analysis unavailable</p>
+          )}
+        </div>
       </div>
 
       {/* Error Message */}
