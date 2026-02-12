@@ -5,7 +5,7 @@
  * This worker should run periodically (e.g., every 30 seconds)
  */
 
-import { MongoClient } from 'mongodb'
+import { MongoClient, Db } from 'mongodb'
 import { notificationService } from '../notifications/NotificationService'
 import { NotificationPayload, UserNotificationPreferences } from '../notifications/types'
 import { NotificationType } from '@/types'
@@ -144,7 +144,7 @@ export class PriceMonitor {
   /**
    * Trigger notification for an alert
    */
-  private async triggerAlert(alert: Alert, currentPrice: number, db: any) {
+  private async triggerAlert(alert: Alert, currentPrice: number, db: Db) {
     try {
       // Fetch user preferences
       const userPrefs = await db.collection<UserPreferences>('user_preferences').findOne({
