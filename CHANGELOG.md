@@ -6,7 +6,311 @@ All notable changes, decisions, and progress for the ORBIT project.
 
 ## [Unreleased]
 
-### 2026-02-11 - Phase 1 Agent Launch & Alert System Implementation
+### 2026-02-11 (Evening) - iOS Deployment & Notification System Integration
+
+#### 🚀 iOS PWA Deployment
+
+**Completed:**
+- ✅ Configured Progressive Web App (PWA) for iOS installation
+- ✅ Created `public/manifest.json` with app metadata, icons, theme colors
+- ✅ Added iOS-specific meta tags in `app/layout.tsx` (viewport, apple-mobile-web-app)
+- ✅ Installed complete favicon set (16x16 to 512x512, Apple touch icons)
+- ✅ Set up "Add to Home Screen" capability for iPhone/iPad
+
+**Meta Tags Added:**
+```typescript
+viewport: {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#3b82f6',
+}
+```
+
+**Status:** ✅ App successfully installable on iOS devices
+
+---
+
+#### 🐘 MongoDB Atlas Production Integration
+
+**Completed:**
+- ✅ Connected MongoDB Atlas cluster (cloud hosting)
+- ✅ Set MONGODB_URI environment variable in Vercel
+- ✅ Verified database connection and collection access
+- ✅ Collections: `alerts`, `notifications`, `user_preferences`
+
+**Connection Details:**
+- Provider: MongoDB Atlas
+- Region: Cloud-hosted
+- Connection pooling: Enabled
+- Environment: Production (Vercel)
+
+**Status:** ✅ MongoDB successfully connected and operational
+
+---
+
+#### 📦 Vercel Deployment & GitHub Integration
+
+**Completed:**
+- ✅ Initialized git repository
+- ✅ Connected to GitHub: https://github.com/keyreq/orbit.git
+- ✅ Connected GitHub to Vercel for automatic deployments
+- ✅ Configured environment variables (MONGODB_URI, RESEND_API_KEY, TWILIO credentials)
+- ✅ Set up Vercel cron job: `0 12 * * *` (daily at noon UTC)
+
+**Deployment URL:**
+- https://orbit-h1qh4sorw-larry-yaus-projects.vercel.app
+
+**Build System:**
+- Next.js 16.1.6 with Turbopack
+- TypeScript strict mode enabled
+- Automatic deployments on git push
+
+**Status:** ✅ Continuous deployment pipeline active
+
+---
+
+#### 🔧 TypeScript Compilation Fixes (14+ Errors)
+
+**Fixed Errors (Complete List):**
+
+1. **alert() type conflict** (AlertsView.tsx)
+   - Error: `alert()` conflicting with React prop types
+   - Fix: Changed to `window.alert()`
+   - Commit: 656b005
+
+2. **MongoDB Document constraint** (mongodb.ts)
+   - Error: Generic type not properly constrained
+   - Fix: Added `<T extends Document = Document>`
+
+3. **NotificationService Map inference** (NotificationService.ts)
+   - Error: Map type couldn't be inferred from array initialization
+   - Fix: Changed from array init to individual `.set()` calls
+
+4. **Serverless cleanup interval** (ratelimit.ts)
+   - Error: Module-level `setInterval` incompatible with serverless
+   - Fix: Removed cleanup interval (serverless functions are ephemeral)
+
+5. **Duplicate RATE_LIMITS export** (ratelimit.ts)
+   - Error: Exported twice (inline + export block)
+   - Fix: Removed from export block
+
+6. **Duplicate function exports** (ratelimit.ts)
+   - Error: Functions exported twice
+   - Fix: Removed inline `export` keywords
+
+7. **Missing checkRateLimit named export** (ratelimit.ts)
+   - Error: Function not available as named export
+   - Fix: Added both default and named exports
+
+8. **Invalid Zod enum errorMap** (validation.ts)
+   - Error: `.enum()` doesn't accept `errorMap` parameter
+   - Fix: Changed to `message` parameter
+
+9. **Invalid Zod number parameters** (validation.ts)
+   - Error: `required_error` and `invalid_type_error` not supported on `.number()`
+   - Fix: Removed unsupported parameters
+
+10. **PaginationSchema .default() in pipe** (validation.ts)
+    - Error: `.default()` not allowed inside `.pipe()`
+    - Fix: Removed `.default()` calls
+
+11. **formatValidationError errors property** (validation.ts)
+    - Error: `error.errors` doesn't exist, should be `error.issues`
+    - Fix: Changed to `error.issues` with type parameter
+
+12. **Duplicate type exports** (validation.ts)
+    - Error: Types exported multiple times
+    - Fix: Removed duplicate export block
+
+13. **price-monitor db type** (price-monitor.ts)
+    - Error: Database variable typed as `any`
+    - Fix: Changed to proper `Db` type from MongoDB
+
+14. **in-app notification structure** (in-app.ts)
+    - Error: Nested `data` field causing frontend parsing issues
+    - Fix: Flattened notification document structure
+
+**Build Status:** ✅ All TypeScript errors resolved, production build passing
+
+---
+
+#### 🔔 Notification System Implementation
+
+**Completed:**
+- ✅ Created multi-channel notification architecture
+- ✅ Implemented `NotificationService` orchestration layer
+- ✅ Created `PriceMonitor` worker to check alerts
+- ✅ Integrated with MongoDB for alert storage
+- ✅ Set up user preferences API
+
+**Notification Channels (6 types):**
+1. 🔔 In-App Notifications → MongoDB storage
+2. 📧 Email → Resend integration (WORKING ✅)
+3. 📱 SMS → Twilio integration
+4. 📞 Phone Calls → Twilio integration
+5. 💬 Telegram → Bot API integration
+6. 💼 Slack → Webhook integration
+
+**API Endpoints Created:**
+- `GET /api/notifications` - Fetch in-app notifications (✅ WORKING)
+- `POST /api/notifications` - Create test notification (404 on deployment)
+- `PUT /api/notifications` - Mark notifications as read
+- `GET /api/preferences` - Get user notification settings (✅ WORKING)
+- `PUT /api/preferences` - Update notification settings (✅ WORKING)
+- `GET /api/cron/price-monitor` - Scheduled alert checker (404 on deployment)
+- `GET /api/debug/alerts` - MongoDB inspection tool (404 on deployment)
+- `GET /api/test-notification` - Quick test creator (404 on deployment)
+
+**Price Monitor Features:**
+- CoinGecko API integration for live prices
+- 1-hour cooldown to prevent spam
+- Filters alerts by condition (above/below)
+- Updates `lastTriggered` timestamp
+
+**Status:** 🟡 Email working, in-app notifications blocked
+
+---
+
+#### 🐛 Known Issues & Active Debugging
+
+**CRITICAL ISSUE: In-App Notifications Not Appearing**
+
+**Symptoms:**
+- ✅ Email notifications working perfectly (user receiving emails)
+- ✅ User preferences correctly set: `['in-app', 'email', 'sms']`
+- ✅ Alert checkboxes show "In-App" selected
+- ✅ `/api/notifications` endpoint accessible (returns empty array)
+- ❌ MongoDB `notifications` collection remains empty
+- ❌ Bell icon shows 0 notifications
+
+**Investigation:**
+1. Verified user preferences via API: `channels: ['in-app', 'email', 'sms']` ✅
+2. User confirmed alert has "In-App" checked multiple times ✅
+3. Email channel sending successfully proves alert triggering works ✅
+4. Key filtering logic in NotificationService.ts:
+   ```typescript
+   const enabledChannels = payload.channels.filter((channel) =>
+     preferences.channels.includes(channel)
+   )
+   ```
+
+**Debugging Added (Commit 477cf05):**
+- Added logging to `price-monitor.ts` (alert channels, user pref channels, final preferences)
+- Added logging to `NotificationService.ts` (payload channels, preferences channels, enabled channels)
+- Added logging to `in-app.ts` (send() called, DB connection established)
+- Added fallback: `userPrefs.channels || ['in-app', 'email', 'sms']`
+
+**Next Steps:**
+1. ⏳ Wait for Vercel deployment to complete
+2. ⏳ Trigger price monitor manually or via cron
+3. ⏳ Examine console logs in Vercel dashboard
+4. ⏳ Identify exact point where in-app notification flow breaks
+5. ⏳ Implement fix based on log analysis
+
+**Hypothesis:**
+Channel filtering may be removing 'in-app' despite it being in both arrays. Logs will reveal exact filter behavior.
+
+---
+
+#### 🚧 Deployment Protection Issues
+
+**Problem:**
+Vercel deployment protection still active despite being disabled in settings.
+
+**Impact:**
+- Some endpoints accessible: `/api/notifications`, `/api/preferences`
+- Some endpoints return 404: `/api/cron/price-monitor`, `/api/debug/alerts`, `/api/test-notification`
+- Cron job cannot access price monitor endpoint
+- Cannot manually trigger alerts for testing
+
+**Workarounds:**
+- GET requests work (like `/api/notifications`)
+- User can authenticate via browser
+- Price monitor should trigger via daily cron (not yet tested)
+
+**Status:** 🟡 Partial access, working around protection issues
+
+---
+
+#### 🔐 Security Updates
+
+**Completed:**
+- ✅ Removed real API keys from `.env.example` (GitHub secret scanning)
+- ✅ Replaced Twilio/Resend credentials with placeholders
+- ✅ Moved all secrets to Vercel environment variables
+- ✅ Verified no secrets committed to git history
+
+**Files Updated:**
+- `.env.example:83` - Changed from real credentials to `your-twilio-account-sid`
+
+**Status:** ✅ Repository clean, no secrets exposed
+
+---
+
+#### 📝 Files Created/Modified (Today)
+
+**Created:**
+- `public/manifest.json` - PWA configuration
+- `app/api/notifications/route.ts` - In-app notifications API
+- `app/api/test-notification/route.ts` - Test notification creator
+- `app/api/cron/price-monitor/route.ts` - Scheduled price checker
+- `app/api/debug/alerts/route.ts` - MongoDB debugging tool
+- `lib/notifications/NotificationService.ts` - Multi-channel orchestrator
+- `lib/notifications/channels/in-app.ts` - In-app notification handler
+- `lib/notifications/channels/email.ts` - Email via Resend
+- `lib/notifications/channels/sms.ts` - SMS via Twilio
+- `lib/notifications/channels/phone.ts` - Phone calls via Twilio
+- `lib/notifications/channels/telegram.ts` - Telegram bot
+- `lib/notifications/channels/slack.ts` - Slack webhooks
+- `lib/workers/price-monitor.ts` - Alert monitoring worker
+- `vercel.json` - Vercel configuration + cron
+
+**Modified:**
+- `app/layout.tsx` - Added iOS PWA meta tags
+- `.env.example` - Replaced credentials with placeholders
+- `components/AlertsView.tsx` - Fixed `alert()` → `window.alert()`
+- `lib/db/mongodb.ts` - Added Document type constraint
+- `lib/ratelimit.ts` - Fixed serverless compatibility
+- `lib/validation.ts` - Fixed Zod schema errors
+- Multiple TypeScript fixes across 14+ files
+
+**Total Changes:** 30+ files created/modified
+
+---
+
+#### 📊 Current Status (End of Day)
+
+**Working:**
+- ✅ iOS PWA installation
+- ✅ GitHub → Vercel CI/CD pipeline
+- ✅ MongoDB Atlas connection
+- ✅ TypeScript compilation (strict mode)
+- ✅ Email notifications via Resend
+- ✅ User preferences API
+- ✅ Notifications API (GET)
+- ✅ Alert creation and storage
+
+**In Progress:**
+- 🟡 In-app notifications (debugging active)
+- 🟡 Vercel deployment protection (workarounds in place)
+- 🟡 Price monitor manual triggering (blocked by 404s)
+
+**Blocked:**
+- ❌ Cron endpoints inaccessible (404 errors)
+- ❌ Debug endpoints inaccessible (404 errors)
+- ❌ Manual price monitor triggering
+
+**Priority:**
+1. Fix in-app notifications (user waiting for mobile testing)
+2. Resolve deployment protection blocking endpoints
+3. Verify cron job functionality
+
+---
+
+### 2026-02-11 (Morning) - Phase 1 Agent Launch & Alert System Implementation
 
 #### 🚀 Phase 1 Agents Launched
 
