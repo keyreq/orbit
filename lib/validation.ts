@@ -407,23 +407,6 @@ export const ValidationSchemas = {
 } as const
 
 // ============================================================================
-// TYPE EXPORTS
-// ============================================================================
-
-export type {
-  AlertCreateInput,
-  AlertUpdateInput,
-  AlertQueryInput,
-  NewsSearchInput,
-  WalletAddInput,
-  DeFiPositionQueryInput,
-  UserSettingsInput,
-  UserRegistrationInput,
-  TelegramLinkInput,
-  PaginationInput,
-}
-
-// ============================================================================
 // SECURITY NOTES
 // ============================================================================
 
