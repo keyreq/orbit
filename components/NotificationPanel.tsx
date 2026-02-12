@@ -27,7 +27,7 @@ export const NotificationPanel: React.FC = () => {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/open/notifications');
+      const response = await fetch('/api/notifications');
 
       // Check if response is HTML (Vercel protection page)
       const contentType = response.headers.get('content-type');
@@ -56,7 +56,7 @@ export const NotificationPanel: React.FC = () => {
     if (!notificationId) return;
 
     try {
-      await fetch('/api/open/notifications', {
+      await fetch('/api/notifications', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notificationIds: [notificationId] }),
@@ -75,7 +75,7 @@ export const NotificationPanel: React.FC = () => {
   // Mark all as read
   const markAllAsRead = async () => {
     try {
-      await fetch('/api/open/notifications', {
+      await fetch('/api/notifications', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ markAll: true }),
