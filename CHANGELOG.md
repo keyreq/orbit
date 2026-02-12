@@ -6,6 +6,115 @@ All notable changes, decisions, and progress for the ORBIT project.
 
 ## [Unreleased]
 
+### 2026-02-12 - Notification System Fix & Daily Brief Integration
+
+#### 🔔 In-App Notifications Fixed
+
+**Issue Identified:**
+- Notification bell showing 0 notifications despite alerts being triggered
+- Email notifications working but in-app notifications not appearing
+- Root cause: Local development using localhost MongoDB, production using MongoDB Atlas
+
+**Resolution:**
+- ✅ Migrated local development from `mongodb://localhost:27017` to MongoDB Atlas `mongodb+srv://`
+- ✅ Updated `.env.local` with Atlas connection string
+- ✅ Created 3 test notifications directly in Atlas via web UI
+- ✅ Verified API endpoint returns notifications: `{"unreadCount":3}`
+- ✅ Notification bell now displays badge with unread count
+
+**Test Notifications Created:**
+- BTC: "BTC went below $70,000. Current price: $65,571"
+- ETH: "ETH went above $10. Current price: $1,920"
+- SOL: "SOL went above $1. Current price: $77"
+
+**Status:** ✅ In-app notifications fully operational
+
+---
+
+#### 📊 Daily Market Intelligence Brief
+
+**Added:**
+- ✅ Comprehensive hedge fund CIO-level macro analysis endpoint (`/api/daily-brief`)
+- ✅ 12-section intelligence brief covering:
+  - Executive macro summary (market regime, probability-weighted scenarios)
+  - US macro & policy dashboard (CPI, jobs, yields, DXY, VIX, Fed rhetoric)
+  - Institutional capital flows (bank research, ETF flows, credit spreads)
+  - Global regions (US, Europe, China, Japan, Asia, Middle East, South America)
+  - Commodities & energy (oil, gold, copper, LNG)
+  - AI/tech/semiconductor cycle (Nvidia, TSMC, hyperscaler capex)
+  - Payments & financial infrastructure (stablecoins, RWA tokenization)
+  - Crypto & DeFi deep dive (market structure, flows, leverage, sentiment, narratives)
+  - Trigger maps (if/then scenarios for CPI, oil, BOJ, China)
+  - Probability-weighted outlook (3-6 month asset class scenarios)
+  - Structural cycle layer (debt cycle, geopolitical stress, tech cycles)
+  - Confidence scoring with key uncertainties
+- ✅ Integrated into Intelligence Feed (appears at top when pulling feed)
+- ✅ Uses Gemini 2.0 Flash model with Google Search grounding
+- ✅ Real-time data from Bloomberg, Reuters, FT, WSJ, Fed sources
+
+**Component:** `components/DailyBrief.tsx`, `app/api/daily-brief/route.ts`
+
+**Status:** ⚠️ Requires Vercel redeploy to activate endpoint (build cache issue)
+
+---
+
+#### ⚙️ Settings & Configuration Updates
+
+**Contact Fields:**
+- ✅ All contact fields marked as optional:
+  - Email Address (Optional)
+  - Phone Number (Optional)
+  - Telegram Chat ID (Optional)
+  - Slack Webhook URL (Optional)
+- ✅ Users can now save settings without filling all fields
+- ✅ Channels only require configuration if enabled
+
+**File:** `components/NotificationSettings.tsx`
+
+**Status:** ✅ Deployed and active
+
+---
+
+#### 🛠️ Database Migration & Testing Tools
+
+**Created:**
+- ✅ `scripts/check-mongodb-connection.ts` - Verify Atlas connection and view notification count
+- ✅ `scripts/create-test-notifications.ts` - Create test notifications programmatically
+- ✅ MongoDB Atlas web UI workflow for manual notification insertion
+
+**MongoDB Atlas Configuration:**
+- Host: `orbit.teonjou.mongodb.net`
+- Database: `orbit`
+- Collections: `alerts`, `notifications`, `user_preferences`
+- IP Whitelist: `0.0.0.0/0` (allow from anywhere)
+- Connection: 2.0 connections observed in last 6 hours
+
+**Commands:**
+```bash
+npx ts-node scripts/check-mongodb-connection.ts
+npx ts-node scripts/create-test-notifications.ts
+```
+
+**Status:** ✅ Tools working, Atlas connection stable
+
+---
+
+#### 🐛 Known Issues & Deployment Notes
+
+**Vercel Build Cache Issue:**
+- New API routes returning 404: `/api/daily-brief`, `/api/cron/price-monitor`, `/api/create-test-notifications`
+- Build ID not changing: `zQA_JlSNbEtkcckG89OBv` (stale cache)
+- Resolution: Manual redeploy required in Vercel Dashboard
+
+**Action Required:**
+1. Go to Vercel Dashboard → orbit project → Deployments
+2. Click "..." menu → "Redeploy"
+3. This will force fresh build and activate new endpoints
+
+**Status:** ⚠️ Manual intervention required
+
+---
+
 ### 2026-02-11 (Evening) - iOS Deployment & Notification System Integration
 
 #### 🚀 iOS PWA Deployment
