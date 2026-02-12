@@ -33,11 +33,14 @@ export class NotificationService {
     preferences: UserNotificationPreferences
   ): Promise<NotificationResult[]> {
     // Filter to only enabled channels
+    console.log('[NotificationService] Payload channels:', payload.channels)
+    console.log('[NotificationService] Preferences channels:', preferences.channels)
+
     const enabledChannels = payload.channels.filter((channel) =>
       preferences.channels.includes(channel)
     )
 
-    console.log(`Sending notification to ${enabledChannels.length} channels:`, enabledChannels)
+    console.log(`[NotificationService] Sending notification to ${enabledChannels.length} channels:`, enabledChannels)
 
     // Send to all channels in parallel
     const promises = enabledChannels.map(async (channelName) => {

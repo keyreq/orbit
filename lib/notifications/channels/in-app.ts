@@ -14,8 +14,10 @@ export class InAppNotificationChannel extends NotificationChannel {
     payload: NotificationPayload,
     preferences: UserNotificationPreferences
   ): Promise<NotificationResult> {
+    console.log('[InAppChannel] send() called for alert:', payload.alertId)
     try {
       const db = await getDatabase()
+      console.log('[InAppChannel] Database connected')
 
       const notification = {
         userId: payload.userId,

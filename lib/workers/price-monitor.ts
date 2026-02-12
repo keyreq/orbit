@@ -175,8 +175,12 @@ export class PriceMonitor {
         phoneNumber: userPrefs.phoneNumber,
         telegramChatId: userPrefs.telegramChatId,
         slackWebhookUrl: userPrefs.slackWebhookUrl,
-        channels: userPrefs.channels,
+        channels: userPrefs.channels || ['in-app', 'email', 'sms'], // Default to all channels if not set
       }
+
+      console.log('[Price Monitor] Alert channels:', alert.notifications)
+      console.log('[Price Monitor] User pref channels:', userPrefs.channels)
+      console.log('[Price Monitor] Final preferences:', preferences)
 
       // Send notifications
       const results = await notificationService.sendNotification(payload, preferences)
