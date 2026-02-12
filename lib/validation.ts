@@ -238,14 +238,14 @@ export const PaginationSchema = z.object({
     .string()
     .regex(/^\d+$/)
     .transform(Number)
-    .pipe(z.number().int().positive().max(100).default(20))
+    .pipe(z.number().int().positive().max(100))
     .optional(),
 
   offset: z
     .string()
     .regex(/^\d+$/)
     .transform(Number)
-    .pipe(z.number().int().min(0).default(0))
+    .pipe(z.number().int().min(0))
     .optional(),
 })
 
