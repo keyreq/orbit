@@ -27,7 +27,7 @@ export const NotificationPanel: React.FC = () => {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/notifications');
+      const response = await fetch('/api/public/notifications');
       const result = await response.json();
 
       if (result.success && result.data) {
@@ -46,7 +46,7 @@ export const NotificationPanel: React.FC = () => {
     if (!notificationId) return;
 
     try {
-      await fetch('/api/notifications', {
+      await fetch('/api/public/notifications', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notificationIds: [notificationId] }),
@@ -65,7 +65,7 @@ export const NotificationPanel: React.FC = () => {
   // Mark all as read
   const markAllAsRead = async () => {
     try {
-      await fetch('/api/notifications', {
+      await fetch('/api/public/notifications', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ markAll: true }),
