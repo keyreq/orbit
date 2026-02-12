@@ -332,10 +332,10 @@ export type TelegramLinkInput = z.infer<typeof TelegramLinkSchema>
  * @param error - Zod validation error
  * @returns Formatted error response
  */
-export function formatValidationError(error: z.ZodError) {
+export function formatValidationError(error: z.ZodError<any>) {
   return {
     error: 'Validation failed',
-    details: error.errors.map((err) => ({
+    details: error.issues.map((err) => ({
       field: err.path.join('.'),
       message: err.message,
     })),
