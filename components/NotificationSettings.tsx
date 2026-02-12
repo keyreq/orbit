@@ -157,7 +157,7 @@ export const NotificationSettings: React.FC = () => {
         {/* Email */}
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            Email Address
+            Email Address (Optional)
           </label>
           <input
             type="email"
@@ -171,7 +171,7 @@ export const NotificationSettings: React.FC = () => {
         {/* Phone Number */}
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            Phone Number
+            Phone Number (Optional)
           </label>
           <input
             type="tel"
