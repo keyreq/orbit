@@ -5,26 +5,17 @@
  */
 
 import { NotificationChannel, NotificationPayload, NotificationResult, UserNotificationPreferences } from '../types'
-import { MongoClient, ObjectId } from 'mongodb'
+import { getDatabase } from '@/lib/db/mongodb'
 
 export class InAppNotificationChannel extends NotificationChannel {
   channel = 'in-app' as const
-
-  private async getDb() {
-    if (!process.env.MONGODB_URI) {
-      throw new Error('MONGODB_URI not configured')
-    }
-    const client = new MongoClient(process.env.MONGODB_URI)
-    await client.connect()
-    return client.db('orbit')
-  }
 
   async send(
     payload: NotificationPayload,
     preferences: UserNotificationPreferences
   ): Promise<NotificationResult> {
     try {
-      const db = await this.getDb()
+      const db = await getDatabase()
 
       const notification = {
         userId: payload.userId,
@@ -32,12 +23,10 @@ export class InAppNotificationChannel extends NotificationChannel {
         type: 'price_alert' as const,
         title: `${payload.token} Price Alert`,
         message: `${payload.token} is now ${payload.condition} $${payload.targetPrice.toLocaleString()}. Current price: $${payload.currentPrice.toLocaleString()}`,
-        data: {
-          token: payload.token,
-          condition: payload.condition,
-          targetPrice: payload.targetPrice,
-          currentPrice: payload.currentPrice,
-        },
+        token: payload.token,
+        condition: payload.condition,
+        targetPrice: payload.targetPrice,
+        currentPrice: payload.currentPrice,
         read: false,
         createdAt: new Date(),
       }
