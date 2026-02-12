@@ -10,6 +10,54 @@ import { getDatabase } from '@/lib/db/mongodb'
 
 export const dynamic = 'force-dynamic'
 
+// POST - Create test notification (for debugging)
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json().catch(() => ({}))
+
+    // If it's a test request, create a test notification
+    if (body.test === true) {
+      const db = await getDatabase()
+
+      const testNotification = {
+        userId: 'demo-user',
+        alertId: 'test-alert-' + Date.now(),
+        type: 'price_alert',
+        title: 'Test Notification',
+        message: 'This is a test in-app notification. If you see this, notifications are working!',
+        token: 'BTC',
+        condition: 'above',
+        targetPrice: 50000,
+        currentPrice: 95000,
+        read: false,
+        createdAt: new Date(),
+      }
+
+      const result = await db.collection('notifications').insertOne(testNotification)
+
+      return NextResponse.json({
+        success: true,
+        message: 'Test notification created! Check your bell icon.',
+        notificationId: result.insertedId.toString()
+      })
+    }
+
+    return NextResponse.json(
+      { error: 'Invalid request. Send { "test": true } to create test notification.' },
+      { status: 400 }
+    )
+  } catch (error) {
+    console.error('Failed to create test notification:', error)
+    return NextResponse.json(
+      {
+        error: 'Failed to create notification',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      },
+      { status: 500 }
+    )
+  }
+}
+
 // GET all in-app notifications for user
 export async function GET(request: NextRequest) {
   try {
