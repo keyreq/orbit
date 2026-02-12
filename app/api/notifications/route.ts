@@ -67,6 +67,9 @@ export async function GET(request: NextRequest) {
     // TODO: Add authentication and filter by session.user.id
     const userId = 'demo-user' // Temporary - replace with actual user ID from session
 
+    // Get user preferences for debugging
+    const userPrefs = await db.collection('user_preferences').findOne({ userId })
+
     const notifications = await db
       .collection('notifications')
       .find({ userId })
@@ -92,6 +95,13 @@ export async function GET(request: NextRequest) {
           createdAt: n.createdAt,
         })),
         unreadCount: notifications.filter(n => !n.read).length,
+      },
+      debug: {
+        userPreferences: userPrefs ? {
+          email: userPrefs.email,
+          phoneNumber: userPrefs.phoneNumber,
+          channels: userPrefs.channels
+        } : null
       }
     })
   } catch (error) {
