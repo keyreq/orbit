@@ -2,11 +2,11 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# Run and deploy your AI Studio app
+# ORBIT - Intelligent Crypto Command Center
 
-This contains everything you need to run your app locally.
+Real-time cryptocurrency price monitoring with intelligent alerts and multi-channel notifications.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1dExOxYUw-F0AIqP52K32l6vV848TMPyX
+**Live Demo**: https://orbit-h1qh4sorw-larry-yaus-projects.vercel.app
 
 ## Run Locally
 
