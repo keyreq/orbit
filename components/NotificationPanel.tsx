@@ -28,6 +28,15 @@ export const NotificationPanel: React.FC = () => {
     try {
       setLoading(true);
       const response = await fetch('/api/public/notifications');
+
+      // Check if response is HTML (Vercel protection page)
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('text/html')) {
+        console.warn('Deployment protection blocking notifications API');
+        setLoading(false);
+        return;
+      }
+
       const result = await response.json();
 
       if (result.success && result.data) {
@@ -36,6 +45,7 @@ export const NotificationPanel: React.FC = () => {
       }
     } catch (err) {
       console.error('Failed to fetch notifications:', err);
+      // Don't crash - just show empty state
     } finally {
       setLoading(false);
     }
