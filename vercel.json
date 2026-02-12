@@ -13,6 +13,19 @@
           "value": "application/manifest+json"
         }
       ]
+    },
+    {
+      "source": "/api/public/:path*",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET,PUT,POST,DELETE,OPTIONS"
+        }
+      ]
     }
   ],
   "crons": [
