@@ -50,10 +50,7 @@ export const AlertCreateSchema = z.object({
   }),
 
   targetPrice: z
-    .number({
-      required_error: 'Target price is required',
-      invalid_type_error: 'Target price must be a number'
-    })
+    .number()
     .positive('Price must be positive')
     .max(10_000_000, 'Price too high (max: 10M)')
     .finite('Price must be finite'),
@@ -74,9 +71,9 @@ export const AlertUpdateSchema = z.object({
   active: z.boolean().optional(),
   targetPrice: z
     .number()
-    .positive()
-    .max(10_000_000)
-    .finite()
+    .positive('Price must be positive')
+    .max(10_000_000, 'Price too high (max: 10M)')
+    .finite('Price must be finite')
     .optional(),
   condition: z.enum(['above', 'below']).optional(),
   notifications: z
