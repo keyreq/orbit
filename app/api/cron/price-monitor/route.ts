@@ -26,9 +26,9 @@ export async function GET(request: NextRequest) {
 
     console.log('[Cron] Starting price monitor check...')
 
-    // Create and run price monitor
+    // Create and run price monitor once
     const monitor = new PriceMonitor()
-    await monitor.start()
+    await monitor.runOnce()
 
     return NextResponse.json({
       success: true,

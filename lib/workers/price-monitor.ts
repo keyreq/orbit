@@ -75,6 +75,16 @@ export class PriceMonitor {
   }
 
   /**
+   * Run a single check without starting the interval
+   * Useful for cron jobs or manual triggers
+   */
+  async runOnce() {
+    console.log('[Price Monitor] Running one-time check...')
+    await this.checkAlerts()
+    console.log('[Price Monitor] One-time check complete')
+  }
+
+  /**
    * Check all active alerts and trigger notifications if needed
    */
   private async checkAlerts() {
