@@ -1,158 +1,100 @@
 /**
- * ORBIT In-App Notifications API Route
+ * In-App Notifications API
  *
- * GET /api/notifications - Fetch user's in-app notifications
- * PUT /api/notifications - Mark notifications as read
+ * GET: Fetch user's in-app notifications
+ * POST: Mark notification as read
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { MongoClient, ObjectId } from 'mongodb'
+import { getDatabase } from '@/lib/db/mongodb'
 
-// ============================================================================
-// DATABASE CONNECTION
-// ============================================================================
+export const dynamic = 'force-dynamic'
 
-if (!process.env.MONGODB_URI) {
-  console.error('CRITICAL: MONGODB_URI environment variable is not set!')
-}
-
-const uri = process.env.MONGODB_URI || 'MISSING_MONGODB_URI'
-let client: MongoClient | null = null
-
-async function getDb() {
-  if (!client) {
-    client = new MongoClient(uri)
-    await client.connect()
-  }
-  return client.db('orbit')
-}
-
-// ============================================================================
-// TYPES
-// ============================================================================
-
-interface InAppNotification {
-  _id?: ObjectId
-  userId: string
-  type: string
-  title: string
-  message: string
-  metadata?: {
-    token?: string
-    price?: number
-    condition?: string
-    targetPrice?: number
-  }
-  read: boolean
-  createdAt: Date
-}
-
-// ============================================================================
-// GET /api/notifications - Fetch notifications
-// ============================================================================
-
+// GET all in-app notifications for user
 export async function GET(request: NextRequest) {
   try {
-    // TODO: Get userId from auth session
-    const userId = 'demo-user'
+    const db = await getDatabase()
 
-    const db = await getDb()
+    // For now, get all notifications (in production, filter by userId from session)
+    // TODO: Add authentication and filter by session.user.id
+    const userId = 'demo-user' // Temporary - replace with actual user ID from session
 
-    // Fetch unread notifications first, then read ones, limit to 50
     const notifications = await db
-      .collection<InAppNotification>('notifications')
+      .collection('notifications')
       .find({ userId })
-      .sort({ read: 1, createdAt: -1 })
+      .sort({ createdAt: -1 })
       .limit(50)
       .toArray()
-
-    // Count unread
-    const unreadCount = notifications.filter(n => !n.read).length
 
     return NextResponse.json({
       success: true,
       data: {
         notifications: notifications.map(n => ({
-          id: n._id?.toString(),
-          type: n.type,
-          title: n.title,
-          message: n.message,
-          metadata: n.metadata,
-          read: n.read,
-          createdAt: n.createdAt.toISOString(),
+          id: n._id.toString(),
+          type: 'price-alert',
+          title: `${n.token} Price Alert`,
+          message: `${n.token} went ${n.condition} $${n.targetPrice?.toLocaleString()}. Current price: $${n.currentPrice?.toLocaleString()}`,
+          metadata: {
+            token: n.token,
+            price: n.currentPrice,
+            condition: n.condition,
+            targetPrice: n.targetPrice,
+          },
+          read: n.read || false,
+          createdAt: n.createdAt,
         })),
-        unreadCount,
-      },
+        unreadCount: notifications.filter(n => !n.read).length,
+      }
     })
   } catch (error) {
-    console.error('GET /api/notifications error:', error)
+    console.error('Failed to fetch notifications:', error)
     return NextResponse.json(
       {
-        success: false,
         error: 'Failed to fetch notifications',
+        message: error instanceof Error ? error.message : 'Unknown error'
       },
       { status: 500 }
     )
   }
 }
 
-// ============================================================================
-// PUT /api/notifications - Mark notifications as read
-// ============================================================================
-
+// PUT - Mark notification(s) as read
 export async function PUT(request: NextRequest) {
   try {
-    // TODO: Get userId from auth session
-    const userId = 'demo-user'
+    const { notificationIds, markAll } = await request.json()
 
-    const body = await request.json()
-    const { notificationIds, markAll } = body
-
-    const db = await getDb()
+    const db = await getDatabase()
+    const { ObjectId } = await import('mongodb')
 
     if (markAll) {
-      // Mark all notifications as read
-      await db
-        .collection<InAppNotification>('notifications')
-        .updateMany({ userId, read: false }, { $set: { read: true } })
+      // Mark all notifications as read for user
+      const userId = 'demo-user' // TODO: Get from session
+      await db.collection('notifications').updateMany(
+        { userId, read: false },
+        { $set: { read: true, readAt: new Date() } }
+      )
     } else if (notificationIds && Array.isArray(notificationIds)) {
       // Mark specific notifications as read
-      await db
-        .collection<InAppNotification>('notifications')
-        .updateMany(
-          {
-            _id: { $in: notificationIds.map((id: string) => new ObjectId(id)) },
-            userId,
-          },
-          { $set: { read: true } }
-        )
+      await db.collection('notifications').updateMany(
+        { _id: { $in: notificationIds.map(id => new ObjectId(id)) } },
+        { $set: { read: true, readAt: new Date() } }
+      )
+    } else {
+      return NextResponse.json(
+        { error: 'Invalid request: provide notificationIds or markAll' },
+        { status: 400 }
+      )
     }
 
-    return NextResponse.json({
-      success: true,
-      message: 'Notifications marked as read',
-    })
+    return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('PUT /api/notifications error:', error)
+    console.error('Failed to mark notification as read:', error)
     return NextResponse.json(
       {
-        success: false,
-        error: 'Failed to update notifications',
+        error: 'Failed to update notification',
+        message: error instanceof Error ? error.message : 'Unknown error'
       },
       { status: 500 }
     )
   }
-}
-
-// ============================================================================
-// CLEANUP - Close connection on process exit
-// ============================================================================
-
-if (typeof process !== 'undefined') {
-  process.on('SIGINT', async () => {
-    if (client) {
-      await client.close()
-      client = null
-    }
-  })
 }
