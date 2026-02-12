@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Menu } from 'lucide-react'
 import { Sidebar } from '@/components/Sidebar'
 import { Dashboard } from '@/components/Dashboard'
+import { DailyBrief } from '@/components/DailyBrief'
 import { NewsFeed } from '@/components/NewsFeed'
 import { DeFiPortfolio } from '@/components/DeFiPortfolio'
 import { ArchitectureView } from '@/components/ArchitectureView'
@@ -20,6 +21,8 @@ export default function HomePage() {
     switch (currentView) {
       case AppView.DASHBOARD:
         return <Dashboard />
+      case AppView.DAILY_BRIEF:
+        return <DailyBrief />
       case AppView.NEWS:
         return <NewsFeed />
       case AppView.DEFI:

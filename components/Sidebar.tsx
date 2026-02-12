@@ -6,7 +6,8 @@ import {
   Bell,
   Settings,
   Activity,
-  Menu
+  Menu,
+  FileText
 } from 'lucide-react';
 import { AppView } from '../types';
 
@@ -21,6 +22,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, isM
   
   const navItems = [
     { id: AppView.DASHBOARD, label: 'Dashboard', icon: LayoutDashboard },
+    { id: AppView.DAILY_BRIEF, label: 'Daily Brief', icon: FileText },
     { id: AppView.NEWS, label: 'Intelligence Feed', icon: Newspaper },
     { id: AppView.DEFI, label: 'DeFi Portfolio', icon: Wallet },
     { id: AppView.ALERTS, label: 'Price Alerts', icon: Bell },

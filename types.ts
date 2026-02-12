@@ -1,5 +1,6 @@
 export enum AppView {
   DASHBOARD = 'DASHBOARD',
+  DAILY_BRIEF = 'DAILY_BRIEF',
   NEWS = 'NEWS',
   DEFI = 'DEFI',
   ALERTS = 'ALERTS',
