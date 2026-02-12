@@ -18,7 +18,7 @@
   "crons": [
     {
       "path": "/api/cron/price-monitor",
-      "schedule": "* * * * *"
+      "schedule": "0 12 * * *"
     }
   ]
 }
