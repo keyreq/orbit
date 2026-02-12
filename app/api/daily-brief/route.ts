@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
       throw new Error('GEMINI_API_KEY not configured')
     }
 
-    const ai = new GoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY })
+    const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
     const prompt = `You are a senior CIO at a tier-1 hedge fund. Generate a comprehensive Daily Market Intelligence Brief for ${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.
 
