@@ -6,6 +6,66 @@ All notable changes, decisions, and progress for the ORBIT project.
 
 ## [Unreleased]
 
+### 2026-02-12 - Simple localStorage-Based User Authentication
+
+#### 🔐 Authentication System - Zero Setup Required
+
+**Implemented:**
+- ✅ localStorage-based unique user ID generation
+- ✅ Automatic account creation on first visit
+- ✅ Account code system (last 8 chars displayed)
+- ✅ Copy/paste account codes to access from another device
+- ✅ Reset account functionality
+- ✅ Load existing account with code
+- ✅ All API routes now filter by user ID from headers
+
+**User Experience:**
+- No signup forms
+- No passwords
+- No OAuth setup required
+- Each browser/device = automatic unique account
+- Perfect for quick testing with friends
+
+**Technical Implementation:**
+- `lib/useUserId.ts` - React hook for user ID management
+- `components/UserIdProvider.tsx` - Context provider for app-wide access
+- `components/AccountCodeUI.tsx` - UI component showing account info
+- `lib/session.ts` - Server-side user ID extraction from headers
+- Updated all API routes to use `x-user-id` header
+
+**API Changes:**
+- All endpoints now require `x-user-id` header
+- `requireAuth(request)` helper validates user ID
+- Returns 401 if user ID missing
+
+**Data Isolation:**
+- Each user sees only their own alerts
+- Each user sees only their own notifications
+- Each user has their own preferences
+- No shared data between accounts
+
+**Decision:** Use localStorage instead of OAuth/NextAuth
+**Rationale:**
+- Instant testing without external setup
+- No Google OAuth credentials needed
+- No environment variables to configure
+- Each friend gets their own account immediately
+- Simple account portability via copy/paste code
+
+**Impact:** Users can immediately test the app with friends. Just share the URL.
+
+**Removed:**
+- ❌ NextAuth package uninstalled
+- ❌ Removed `lib/auth.ts`
+- ❌ Removed `components/SessionProvider.tsx`
+- ❌ Removed `components/AuthButton.tsx`
+- ❌ Removed `app/api/auth/[...nextauth]/route.ts`
+- ❌ Removed `types/next-auth.d.ts`
+
+**Status:** ✅ Deployed and ready for multi-user testing
+
+---
+
 ### 2026-02-12 - Notification System Fix & Daily Brief Integration
 
 #### 🔔 In-App Notifications Fixed
