@@ -1,0 +1,35 @@
+# GitLeaks configuration to prevent future secret commits
+# Install: https://github.com/gitleaks/gitleaks
+
+title = "ORBIT Secret Detection"
+
+[[rules]]
+id = "mongodb-uri"
+description = "MongoDB Connection String"
+regex = '''mongodb(\+srv)?://[^\s'"]+'''
+tags = ["database", "mongodb"]
+
+[[rules]]
+id = "google-api-key"
+description = "Google API Key"
+regex = '''AIza[0-9A-Za-z\\-_]{35}'''
+tags = ["api", "google"]
+
+[[rules]]
+id = "generic-api-key"
+description = "Generic API Key"
+regex = '''(?i)(api[_-]?key|apikey)['":\s]*[=:]\s*['"][0-9a-zA-Z\-_]{20,}['"]'''
+tags = ["api"]
+
+[[rules]]
+id = "redis-url"
+description = "Redis Connection String"
+regex = '''redis://[^\s'"]+'''
+tags = ["database", "redis"]
+
+[allowlist]
+description = "Allowlist for example files"
+paths = [
+    '''.env.example''',
+    '''docs/'''
+]
