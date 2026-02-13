@@ -16,13 +16,16 @@ export const NewsFeed: React.FC = () => {
   useEffect(() => {
     let isMounted = true;
 
+    console.log('[NewsFeed] ⚡ Component mounted/updated');
+    console.log('[NewsFeed] userIdLoading:', userIdLoading);
+    console.log('[NewsFeed] userId:', userId);
+
     // Fetch comprehensive macro analysis from Daily Brief
     const fetchMacroAnalysis = async () => {
-      if (userIdLoading) return; // Wait for userId to load
-
-      setMacroLoading(true);
       console.log('[NewsFeed] 🔄 Starting daily brief fetch...');
       console.log('[NewsFeed] Current time:', new Date().toISOString());
+
+      setMacroLoading(true);
 
       try {
         const fetchStart = Date.now();
@@ -73,7 +76,7 @@ export const NewsFeed: React.FC = () => {
 
     // Fetch news
     const fetchNews = async () => {
-      if (!userId || userIdLoading) return; // Need userId for news API
+      console.log('[NewsFeed] 📰 Fetching news for query:', query);
 
       setLoading(true);
       setError(null);
@@ -84,7 +87,7 @@ export const NewsFeed: React.FC = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-user-id': userId,
+            'x-user-id': userId || 'unknown',
           },
           body: JSON.stringify({ topic: query }),
         });
@@ -120,12 +123,16 @@ export const NewsFeed: React.FC = () => {
       }
     };
 
-    if (!userIdLoading) {
-      fetchMacroAnalysis();
+    // Always fetch daily brief (doesn't need userId)
+    fetchMacroAnalysis();
+
+    // Fetch news only when userId is ready
+    if (!userIdLoading && userId) {
       fetchNews();
     }
+
     return () => { isMounted = false; };
-  }, [refreshKey, query, userIdLoading]);
+  }, [refreshKey, query, userIdLoading, userId]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
