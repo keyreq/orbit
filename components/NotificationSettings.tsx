@@ -188,8 +188,8 @@ export const NotificationSettings: React.FC = () => {
           />
         </div>
 
-        {/* Phone Number */}
-        <div>
+        {/* Phone Number - TEMPORARILY DISABLED */}
+        {/* <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
             Phone Number (Optional)
           </label>
@@ -203,7 +203,7 @@ export const NotificationSettings: React.FC = () => {
           <p className="text-xs text-gray-500 mt-1">
             Use E.164 format: +[country code][number]
           </p>
-        </div>
+        </div> */}
 
         {/* Telegram Chat ID */}
         <div>
