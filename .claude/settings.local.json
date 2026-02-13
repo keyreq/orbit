@@ -37,7 +37,10 @@
       "Bash(python -m json.tool:*)",
       "Bash(git checkout:*)",
       "Bash(npm uninstall:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(npx vercel:*)",
+      "Bash(git filter-branch:*)",
+      "Bash(set FILTER_BRANCH_SQUELCH_WARNING=1)"
     ]
   }
 }
