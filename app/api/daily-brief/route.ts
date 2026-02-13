@@ -297,8 +297,10 @@ Remember: You're writing for sophisticated investors who need ACTIONABLE INTELLI
 
     const result = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
-      systemInstruction: 'You are a senior portfolio manager and market strategist with 20 years of experience at tier-1 hedge funds. Your analysis is data-driven, probability-weighted, and focused on capital flows and regime change. Use web search to find real-time market data and news from reliable sources.',
-      contents: prompt
+      contents: prompt,
+      config: {
+        tools: [{ googleSearch: {} }],
+      },
     })
 
     const brief = result.text
