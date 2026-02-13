@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Loader2, ExternalLink, Globe, Twitter, TrendingUp, AlertTriangle } from 'lucide-react';
 import { NewsItem } from '../types';
+import { useUserIdContext } from './UserIdProvider';
 
 export const NewsFeed: React.FC = () => {
+  const { userId, isLoading: userIdLoading } = useUserIdContext();
   const [query, setQuery] = useState('Blockchain Macro Economics');
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -16,15 +18,28 @@ export const NewsFeed: React.FC = () => {
 
     // Fetch comprehensive macro analysis from Daily Brief
     const fetchMacroAnalysis = async () => {
+      if (userIdLoading) return; // Wait for userId to load
+
       setMacroLoading(true);
+      console.log('[NewsFeed] Fetching daily brief...');
       try {
         const response = await fetch('/api/daily-brief');
+        console.log('[NewsFeed] Daily brief response status:', response.status);
+
         const data = await response.json();
-        if (isMounted && data.success) {
+        console.log('[NewsFeed] Daily brief data:', data);
+
+        if (isMounted && data.success && data.data?.brief) {
           setMacroAnalysis(data.data.brief);
+          console.log('[NewsFeed] Daily brief loaded successfully');
+        } else {
+          console.warn('[NewsFeed] Daily brief response missing data:', data);
+          if (isMounted) {
+            setMacroAnalysis('*Macro analysis temporarily unavailable. The analysis service is warming up.*');
+          }
         }
       } catch (err) {
-        console.error('Macro analysis error:', err);
+        console.error('[NewsFeed] Macro analysis error:', err);
         if (isMounted) {
           setMacroAnalysis('*Macro analysis temporarily unavailable. Check back shortly.*');
         }
@@ -37,6 +52,8 @@ export const NewsFeed: React.FC = () => {
 
     // Fetch news
     const fetchNews = async () => {
+      if (!userId || userIdLoading) return; // Need userId for news API
+
       setLoading(true);
       setError(null);
 
@@ -46,6 +63,7 @@ export const NewsFeed: React.FC = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'x-user-id': userId,
           },
           body: JSON.stringify({ topic: query }),
         });
@@ -81,10 +99,12 @@ export const NewsFeed: React.FC = () => {
       }
     };
 
-    fetchMacroAnalysis();
-    fetchNews();
+    if (!userIdLoading) {
+      fetchMacroAnalysis();
+      fetchNews();
+    }
     return () => { isMounted = false; };
-  }, [refreshKey, query]);
+  }, [refreshKey, query, userIdLoading]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
