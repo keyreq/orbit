@@ -40,6 +40,21 @@ export default function HomePage() {
 
   return (
     <div className="flex min-h-screen bg-orbit-900 font-sans text-gray-100">
+      {/* Hamburger Menu Button - Fixed Position */}
+      <button
+        onClick={() => setIsMobileOpen(true)}
+        className={`
+          lg:hidden fixed top-4 left-4 z-[120]
+          p-3 bg-orbit-800 border border-orbit-600 rounded-lg
+          text-white hover:text-orbit-accent hover:border-orbit-accent
+          active:bg-orbit-700 transition-all touch-manipulation shadow-xl
+          ${isMobileOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}
+        `}
+        aria-label="Open menu"
+      >
+        <Menu className="w-6 h-6" />
+      </button>
+
       <Sidebar
         currentView={currentView}
         onChangeView={setCurrentView}
@@ -48,18 +63,9 @@ export default function HomePage() {
       />
 
       <main className="flex-1 relative overflow-y-auto h-screen">
-        {/* Mobile Header */}
-        <div className="lg:hidden flex items-center justify-between p-4 border-b border-orbit-600 bg-orbit-800 backdrop-blur sticky top-0 z-[120]">
-          <div className="flex items-center">
-            <button
-              onClick={() => setIsMobileOpen(!isMobileOpen)}
-              className="p-3 -ml-2 text-white hover:text-orbit-accent active:bg-orbit-700 rounded-lg transition-all touch-manipulation"
-              aria-label={isMobileOpen ? "Close menu" : "Open menu"}
-            >
-              <Menu className="w-7 h-7" />
-            </button>
-            <span className="ml-2 font-bold text-white">ORBIT</span>
-          </div>
+        {/* Mobile Header - No hamburger here anymore */}
+        <div className="lg:hidden flex items-center justify-between p-4 pl-16 border-b border-orbit-600 bg-orbit-800 backdrop-blur sticky top-0 z-30">
+          <span className="font-bold text-white">ORBIT</span>
           <NotificationPanel />
         </div>
 

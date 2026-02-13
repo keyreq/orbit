@@ -6,7 +6,9 @@ import {
   Bell,
   Settings,
   Activity,
-  FileText
+  FileText,
+  Menu,
+  X
 } from 'lucide-react';
 import { AppView } from '../types';
 import { AccountCodeUI } from './AccountCodeUI';
@@ -52,13 +54,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, isM
         fixed lg:static inset-y-0 left-0 z-[110]
         w-64 border-r border-orbit-600 shadow-2xl
         transform transition-transform duration-300 ease-in-out
-        ${isMobileOpen ? 'translate-x-0 pt-16' : '-translate-x-full lg:translate-x-0 lg:pt-0'}
+        ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div className="h-16 flex items-center px-6 border-b border-orbit-600">
-            <Activity className="w-8 h-8 text-orbit-accent mr-3" />
-            <span className="text-xl font-bold tracking-wider text-white">ORBIT</span>
+          {/* Header with Logo and Close Button */}
+          <div className="h-16 flex items-center justify-between px-6 border-b border-orbit-600">
+            <div className="flex items-center">
+              <Activity className="w-8 h-8 text-orbit-accent mr-3" />
+              <span className="text-xl font-bold tracking-wider text-white">ORBIT</span>
+            </div>
+            {/* Close button - only visible on mobile */}
+            <button
+              onClick={() => setIsMobileOpen(false)}
+              className="lg:hidden p-2 text-gray-400 hover:text-white active:bg-orbit-700 rounded-lg transition-all"
+              aria-label="Close menu"
+            >
+              <X className="w-6 h-6" />
+            </button>
           </div>
 
           {/* Navigation */}
