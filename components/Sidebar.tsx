@@ -52,6 +52,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, isM
         w-64 bg-orbit-800 border-r border-orbit-600 shadow-2xl
         transform transition-transform duration-300 ease-in-out
         ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        opacity-100
       `}>
         <div className="flex flex-col h-full">
           {/* Logo */}
