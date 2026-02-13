@@ -163,7 +163,28 @@ export class PriceMonitor {
 
       if (!userPrefs) {
         console.warn(`[Price Monitor] No preferences found for user ${alert.userId}`)
-        return
+        console.warn(`[Price Monitor] Creating default preferences for user ${alert.userId}`)
+
+        // Create default preferences for this user
+        await db.collection('user_preferences').insertOne({
+          userId: alert.userId,
+          channels: ['in-app'], // Default to in-app only
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+
+        // Fetch the newly created preferences
+        const newPrefs = await db.collection<UserPreferences>('user_preferences').findOne({
+          userId: alert.userId,
+        })
+
+        if (!newPrefs) {
+          console.error(`[Price Monitor] Failed to create preferences for user ${alert.userId}`)
+          return
+        }
+
+        // Use the new preferences
+        userPrefs = newPrefs as any
       }
 
       // Build notification payload
