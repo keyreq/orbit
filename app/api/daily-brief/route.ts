@@ -11,7 +11,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenAI } from '@google/genai'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60 // Extended timeout for comprehensive analysis
@@ -22,7 +22,9 @@ export async function GET(request: NextRequest) {
       throw new Error('GEMINI_API_KEY not configured')
     }
 
-    const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
+    const ai = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY
+    })
 
     const prompt = `You are a senior CIO at a tier-1 hedge fund. Generate a comprehensive Daily Market Intelligence Brief for ${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.
 
@@ -290,16 +292,16 @@ SOURCES TO PRIORITIZE IN YOUR SEARCH:
 
 Remember: You're writing for sophisticated investors who need ACTIONABLE INTELLIGENCE with SPECIFIC DATA POINTS, not generic market commentary.`
 
-    const model = ai.getGenerativeModel({
-      model: 'gemini-1.5-flash',
-      systemInstruction: 'You are a senior portfolio manager and market strategist with 20 years of experience at tier-1 hedge funds. Your analysis is data-driven, probability-weighted, and focused on capital flows and regime change. Use web search to find real-time market data and news from reliable sources.'
-    })
-
     console.log('[Daily Brief] Generating comprehensive market intelligence brief...')
     const startTime = Date.now()
 
-    const result = await model.generateContent(prompt)
-    const brief = result.response.text()
+    const result = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      systemInstruction: 'You are a senior portfolio manager and market strategist with 20 years of experience at tier-1 hedge funds. Your analysis is data-driven, probability-weighted, and focused on capital flows and regime change. Use web search to find real-time market data and news from reliable sources.',
+      contents: prompt
+    })
+
+    const brief = result.text
 
     const generationTime = Date.now() - startTime
     console.log(`[Daily Brief] Generated in ${generationTime}ms`)
