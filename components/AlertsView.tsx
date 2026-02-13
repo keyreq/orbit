@@ -3,6 +3,7 @@ import { Bell, Plus, Trash2, Edit2, Mail, MessageSquare, Phone, Send, Loader2 } 
 import { Alert, NotificationType } from '../types';
 import { CreateAlertView } from './CreateAlertView';
 import { fetchAlerts, createAlert, updateAlert, deleteAlert as deleteAlertApi } from '@/lib/api/alerts';
+import { useUserIdContext } from './UserIdProvider';
 
 const getNotificationIcon = (type: NotificationType) => {
   switch (type) {
@@ -43,6 +44,7 @@ const getNotificationLabel = (type: NotificationType) => {
 };
 
 export const AlertsView: React.FC = () => {
+  const { userId, isLoading: userIdLoading } = useUserIdContext();
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [editingAlert, setEditingAlert] = useState<Alert | null>(null);
   const [loading, setLoading] = useState(true);
@@ -56,14 +58,17 @@ export const AlertsView: React.FC = () => {
 
   // Fetch alerts on component mount
   useEffect(() => {
-    loadAlerts();
-  }, []);
+    if (userId) {
+      loadAlerts();
+    }
+  }, [userId]);
 
   const loadAlerts = async () => {
+    if (!userId) return;
     try {
       setLoading(true);
       setError(null);
-      const data = await fetchAlerts();
+      const data = await fetchAlerts(userId);
       setAlerts(data);
     } catch (err) {
       console.error('Failed to load alerts:', err);
@@ -74,11 +79,12 @@ export const AlertsView: React.FC = () => {
   };
 
   const toggleAlert = async (id: string) => {
+    if (!userId) return;
     const alert = alerts.find(a => a.id === id);
     if (!alert) return;
 
     try {
-      const updated = await updateAlert(id, { active: !alert.active });
+      const updated = await updateAlert(userId, id, { active: !alert.active });
       setAlerts(alerts.map(a => a.id === id ? updated : a));
     } catch (err) {
       console.error('Failed to toggle alert:', err);
@@ -87,12 +93,13 @@ export const AlertsView: React.FC = () => {
   };
 
   const handleDeleteAlert = async (id: string) => {
+    if (!userId) return;
     if (!confirm('Are you sure you want to delete this alert?')) {
       return;
     }
 
     try {
-      await deleteAlertApi(id);
+      await deleteAlertApi(userId, id);
       setAlerts(alerts.filter(a => a.id !== id));
     } catch (err) {
       console.error('Failed to delete alert:', err);
@@ -116,7 +123,8 @@ export const AlertsView: React.FC = () => {
     notifications: NotificationType[];
     active: boolean;
   }) => {
-    const newAlert = await createAlert({
+    if (!userId) return;
+    const newAlert = await createAlert(userId, {
       token: alertData.token,
       condition: alertData.condition,
       targetPrice: alertData.targetPrice,
@@ -126,11 +134,15 @@ export const AlertsView: React.FC = () => {
   };
 
   const saveQuickSetup = async () => {
+    if (!userId) return;
     try {
       setSavingQuick(true);
       const response = await fetch('/api/preferences', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': userId,
+        },
         body: JSON.stringify({
           email: quickEmail,
           phoneNumber: quickPhone,
@@ -158,9 +170,9 @@ export const AlertsView: React.FC = () => {
     notifications: NotificationType[];
     active: boolean;
   }) => {
-    if (!editingAlert) return;
+    if (!userId || !editingAlert) return;
 
-    const updated = await updateAlert(editingAlert.id, {
+    const updated = await updateAlert(userId, editingAlert.id, {
       targetPrice: alertData.targetPrice,
       condition: alertData.condition,
       notifications: alertData.notifications,

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import { UserIdProvider } from '@/components/UserIdProvider'
 
 export const metadata: Metadata = {
   title: 'ORBIT - Intelligent Crypto Command Center',
@@ -46,7 +47,9 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
-      <body className="font-sans antialiased touch-manipulation">{children}</body>
+      <body className="font-sans antialiased touch-manipulation">
+        <UserIdProvider>{children}</UserIdProvider>
+      </body>
     </html>
   )
 }

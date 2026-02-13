@@ -7,12 +7,17 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getDatabase } from '@/lib/db/mongodb'
+import { requireAuth } from '@/lib/session'
 
 export const dynamic = 'force-dynamic'
 
 // POST - Create test notification (for debugging)
 export async function POST(request: NextRequest) {
   try {
+    // Require authentication
+    const { userId, unauthorized } = requireAuth(request)
+    if (unauthorized) return unauthorized
+
     const body = await request.json().catch(() => ({}))
 
     // If it's a test request, create a test notification
@@ -20,7 +25,7 @@ export async function POST(request: NextRequest) {
       const db = await getDatabase()
 
       const testNotification = {
-        userId: 'demo-user',
+        userId: userId,
         alertId: 'test-alert-' + Date.now(),
         type: 'price_alert',
         title: 'Test Notification',
@@ -61,11 +66,11 @@ export async function POST(request: NextRequest) {
 // GET all in-app notifications for user
 export async function GET(request: NextRequest) {
   try {
-    const db = await getDatabase()
+    // Require authentication
+    const { userId, unauthorized } = requireAuth(request)
+    if (unauthorized) return unauthorized
 
-    // For now, get all notifications (in production, filter by userId from session)
-    // TODO: Add authentication and filter by session.user.id
-    const userId = 'demo-user' // Temporary - replace with actual user ID from session
+    const db = await getDatabase()
 
     // Get user preferences for debugging
     const userPrefs = await db.collection('user_preferences').findOne({ userId })
@@ -119,6 +124,10 @@ export async function GET(request: NextRequest) {
 // PUT - Mark notification(s) as read
 export async function PUT(request: NextRequest) {
   try {
+    // Require authentication
+    const { userId, unauthorized } = requireAuth(request)
+    if (unauthorized) return unauthorized
+
     const { notificationIds, markAll } = await request.json()
 
     const db = await getDatabase()
@@ -126,7 +135,6 @@ export async function PUT(request: NextRequest) {
 
     if (markAll) {
       // Mark all notifications as read for user
-      const userId = 'demo-user' // TODO: Get from session
       await db.collection('notifications').updateMany(
         { userId, read: false },
         { $set: { read: true, readAt: new Date() } }

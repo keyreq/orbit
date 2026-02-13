@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
 import { z } from 'zod'
 import { safeValidate } from '@/lib/validation'
+import { requireAuth } from '@/lib/session'
 
 // Schema for user preferences
 const PreferencesSchema = z.object({
@@ -45,8 +46,9 @@ async function getDb() {
  */
 export async function GET(request: NextRequest) {
   try {
-    // TODO: Get userId from auth session
-    const userId = 'demo-user'
+    // Require authentication
+    const { userId, unauthorized } = requireAuth(request)
+    if (unauthorized) return unauthorized
 
     const db = await getDb()
     const preferences = await db.collection('user_preferences').findOne({ userId })
@@ -98,6 +100,10 @@ export async function GET(request: NextRequest) {
  */
 export async function PUT(request: NextRequest) {
   try {
+    // Require authentication
+    const { userId, unauthorized } = requireAuth(request)
+    if (unauthorized) return unauthorized
+
     const body = await request.json()
 
     // Validate input
@@ -112,9 +118,6 @@ export async function PUT(request: NextRequest) {
         { status: 400 }
       )
     }
-
-    // TODO: Get userId from auth session
-    const userId = 'demo-user'
 
     const db = await getDb()
 

@@ -34,7 +34,10 @@
       "Bash(grep:*)",
       "Bash(timeout 45 bash -c \"while true; do sleep 5; curl -k -s https://orbit-h1qh4sorw-larry-yaus-projects.vercel.app/api/debug/create-notification | grep -q success && echo ''DEPLOYED'' && break; done\")",
       "Bash(npx ts-node:*)",
-      "Bash(python -m json.tool:*)"
+      "Bash(python -m json.tool:*)",
+      "Bash(git checkout:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm run build:*)"
     ]
   }
 }

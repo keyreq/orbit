@@ -10,6 +10,7 @@ import {
   FileText
 } from 'lucide-react';
 import { AppView } from '../types';
+import { AccountCodeUI } from './AccountCodeUI';
 
 interface SidebarProps {
   currentView: AppView;
@@ -77,15 +78,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, isM
 
           {/* User Info */}
           <div className="p-4 border-t border-orbit-600">
-            <div className="flex items-center px-4 py-3 rounded-xl bg-orbit-700/50">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-blue-500 flex items-center justify-center text-xs font-bold text-white">
-                JD
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-white">John Doe</p>
-                <p className="text-xs text-gray-500">Premium Plan</p>
-              </div>
-            </div>
+            <AccountCodeUI />
           </div>
         </div>
       </aside>

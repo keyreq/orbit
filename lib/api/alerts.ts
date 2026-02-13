@@ -30,8 +30,12 @@ interface ApiResponse<T> {
 /**
  * Fetch all alerts for the current user
  */
-export async function fetchAlerts(): Promise<Alert[]> {
-  const response = await fetch('/api/alerts')
+export async function fetchAlerts(userId: string): Promise<Alert[]> {
+  const response = await fetch('/api/alerts', {
+    headers: {
+      'x-user-id': userId,
+    },
+  })
   const result: ApiResponse<Alert[]> = await response.json()
 
   if (!result.success || !result.data) {
@@ -44,11 +48,12 @@ export async function fetchAlerts(): Promise<Alert[]> {
 /**
  * Create a new alert
  */
-export async function createAlert(data: AlertCreateData): Promise<Alert> {
+export async function createAlert(userId: string, data: AlertCreateData): Promise<Alert> {
   const response = await fetch('/api/alerts', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'x-user-id': userId,
     },
     body: JSON.stringify(data),
   })
@@ -66,6 +71,7 @@ export async function createAlert(data: AlertCreateData): Promise<Alert> {
  * Update an existing alert
  */
 export async function updateAlert(
+  userId: string,
   id: string,
   data: AlertUpdateData
 ): Promise<Alert> {
@@ -73,6 +79,7 @@ export async function updateAlert(
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
+      'x-user-id': userId,
     },
     body: JSON.stringify(data),
   })
@@ -89,9 +96,12 @@ export async function updateAlert(
 /**
  * Delete an alert
  */
-export async function deleteAlert(id: string): Promise<void> {
+export async function deleteAlert(userId: string, id: string): Promise<void> {
   const response = await fetch(`/api/alerts/${id}`, {
     method: 'DELETE',
+    headers: {
+      'x-user-id': userId,
+    },
   })
 
   const result: ApiResponse<null> = await response.json()

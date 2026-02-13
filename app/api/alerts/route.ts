@@ -12,6 +12,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { MongoClient, ObjectId } from 'mongodb'
 import { AlertCreateSchema, safeValidate } from '@/lib/validation'
 import { checkRateLimit, createRateLimitResponse, getRateLimitHeaders, RATE_LIMITS } from '@/lib/ratelimit'
+import { requireAuth } from '@/lib/session'
 
 // ============================================================================
 // DATABASE CONNECTION
@@ -54,8 +55,9 @@ interface Alert {
 
 export async function GET(request: NextRequest) {
   try {
-    // TODO: Get userId from auth session
-    const userId = 'demo-user' // Placeholder until auth is implemented
+    // Require authentication
+    const { userId, unauthorized } = requireAuth(request)
+    if (unauthorized) return unauthorized
 
     // Rate limiting
     const rateLimitResult = await checkRateLimit(request, RATE_LIMITS.ALERT_READ)
@@ -113,8 +115,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // TODO: Get userId from auth session
-    const userId = 'demo-user' // Placeholder until auth is implemented
+    // Require authentication
+    const { userId, unauthorized } = requireAuth(request)
+    if (unauthorized) return unauthorized
 
     // Parse and validate request body
     const body = await request.json()

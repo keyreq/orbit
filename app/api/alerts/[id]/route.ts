@@ -10,6 +10,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { MongoClient, ObjectId } from 'mongodb'
+import { requireAuth } from '@/lib/session'
 import { AlertUpdateSchema, safeValidate } from '@/lib/validation'
 import { checkRateLimit, createRateLimitResponse, getRateLimitHeaders, RATE_LIMITS } from '@/lib/ratelimit'
 
@@ -57,8 +58,9 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // TODO: Get userId from auth session
-    const userId = 'demo-user' // Placeholder until auth is implemented
+    // Require authentication
+    const { userId, unauthorized } = requireAuth(request)
+    if (unauthorized) return unauthorized
 
     const { id } = await params
 
@@ -199,8 +201,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // TODO: Get userId from auth session
-    const userId = 'demo-user' // Placeholder until auth is implemented
+    // Require authentication
+    const { userId, unauthorized } = requireAuth(request)
+    if (unauthorized) return unauthorized
 
     const { id } = await params
 

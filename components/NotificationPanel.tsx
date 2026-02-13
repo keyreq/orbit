@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Bell, X, Check, TrendingUp, TrendingDown } from 'lucide-react';
+import { useUserIdContext } from './UserIdProvider';
 
 interface Notification {
   id: string;
@@ -17,6 +18,7 @@ interface Notification {
 }
 
 export const NotificationPanel: React.FC = () => {
+  const { userId } = useUserIdContext();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -25,9 +27,14 @@ export const NotificationPanel: React.FC = () => {
 
   // Fetch notifications
   const fetchNotifications = async () => {
+    if (!userId) return;
     try {
       setLoading(true);
-      const response = await fetch('/api/notifications');
+      const response = await fetch('/api/notifications', {
+        headers: {
+          'x-user-id': userId,
+        },
+      });
 
       // Check if response is HTML (Vercel protection page)
       const contentType = response.headers.get('content-type');
@@ -53,12 +60,15 @@ export const NotificationPanel: React.FC = () => {
 
   // Mark notification as read
   const markAsRead = async (notificationId: string) => {
-    if (!notificationId) return;
+    if (!userId || !notificationId) return;
 
     try {
       await fetch('/api/notifications', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': userId,
+        },
         body: JSON.stringify({ notificationIds: [notificationId] }),
       });
 
@@ -74,10 +84,14 @@ export const NotificationPanel: React.FC = () => {
 
   // Mark all as read
   const markAllAsRead = async () => {
+    if (!userId) return;
     try {
       await fetch('/api/notifications', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': userId,
+        },
         body: JSON.stringify({ markAll: true }),
       });
 
@@ -91,12 +105,14 @@ export const NotificationPanel: React.FC = () => {
 
   // Load notifications on mount and when panel opens
   useEffect(() => {
-    fetchNotifications();
+    if (userId) {
+      fetchNotifications();
 
-    // Poll for new notifications every 30 seconds
-    const interval = setInterval(fetchNotifications, 30000);
-    return () => clearInterval(interval);
-  }, []);
+      // Poll for new notifications every 30 seconds
+      const interval = setInterval(fetchNotifications, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [userId]);
 
   // Close panel when clicking outside
   useEffect(() => {

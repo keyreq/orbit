@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, Mail, Phone, MessageSquare, Send, Check, X, Loader2 } from 'lucide-react';
 import { NotificationType } from '../types';
+import { useUserIdContext } from './UserIdProvider';
 
 interface NotificationSettings {
   email?: string;
@@ -17,6 +18,7 @@ interface TestResult {
 }
 
 export const NotificationSettings: React.FC = () => {
+  const { userId } = useUserIdContext();
   const [settings, setSettings] = useState<NotificationSettings>({
     channels: ['in-app'],
   });
@@ -27,13 +29,20 @@ export const NotificationSettings: React.FC = () => {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
-    loadSettings();
-  }, []);
+    if (userId) {
+      loadSettings();
+    }
+  }, [userId]);
 
   const loadSettings = async () => {
+    if (!userId) return;
     try {
       setLoading(true);
-      const response = await fetch('/api/preferences');
+      const response = await fetch('/api/preferences', {
+        headers: {
+          'x-user-id': userId,
+        },
+      });
       const data = await response.json();
       if (data.success) {
         setSettings(data.data);
@@ -46,6 +55,7 @@ export const NotificationSettings: React.FC = () => {
   };
 
   const saveSettings = async () => {
+    if (!userId) return;
     try {
       setSaving(true);
       setMessage(null);
@@ -54,6 +64,7 @@ export const NotificationSettings: React.FC = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'x-user-id': userId,
         },
         body: JSON.stringify(settings),
       });
