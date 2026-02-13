@@ -12,16 +12,37 @@ import { requireAuth } from '@/lib/session'
 
 // Schema for user preferences
 const PreferencesSchema = z.object({
-  email: z.string().email().optional(),
+  email: z
+    .string()
+    .trim()
+    .transform(val => val === '' ? undefined : val)
+    .pipe(z.string().email().optional())
+    .optional(),
   phoneNumber: z
     .string()
-    .regex(/^\+[1-9]\d{1,14}$/, 'Phone number must be in E.164 format (e.g., +14155552671)')
+    .trim()
+    .transform(val => val === '' ? undefined : val)
+    .pipe(
+      z.string()
+        .regex(/^\+[1-9]\d{1,14}$/, 'Phone number must be in E.164 format (e.g., +14155552671)')
+        .optional()
+    )
     .optional(),
-  telegramChatId: z.string().optional(),
+  telegramChatId: z
+    .string()
+    .trim()
+    .transform(val => val === '' ? undefined : val)
+    .optional(),
   slackWebhookUrl: z
     .string()
-    .url()
-    .startsWith('https://hooks.slack.com/', 'Must be a valid Slack webhook URL')
+    .trim()
+    .transform(val => val === '' ? undefined : val)
+    .pipe(
+      z.string()
+        .url()
+        .startsWith('https://hooks.slack.com/', 'Must be a valid Slack webhook URL')
+        .optional()
+    )
     .optional(),
   channels: z
     .array(z.enum(['in-app', 'email', 'sms', 'phone', 'telegram', 'slack']))

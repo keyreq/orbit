@@ -60,13 +60,22 @@ export const NotificationSettings: React.FC = () => {
       setSaving(true);
       setMessage(null);
 
+      // Clean up empty strings before sending
+      const cleanedSettings = {
+        ...settings,
+        email: settings.email?.trim() || undefined,
+        phoneNumber: settings.phoneNumber?.trim() || undefined,
+        telegramChatId: settings.telegramChatId?.trim() || undefined,
+        slackWebhookUrl: settings.slackWebhookUrl?.trim() || undefined,
+      };
+
       const response = await fetch('/api/preferences', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'x-user-id': userId,
         },
-        body: JSON.stringify(settings),
+        body: JSON.stringify(cleanedSettings),
       });
 
       const data = await response.json();
@@ -75,7 +84,7 @@ export const NotificationSettings: React.FC = () => {
         setMessage({ type: 'success', text: 'Settings saved successfully!' });
         setTimeout(() => setMessage(null), 3000);
       } else {
-        setMessage({ type: 'error', text: data.message || 'Failed to save settings' });
+        setMessage({ type: 'error', text: data.error?.details?.[0]?.message || data.message || 'Failed to save settings' });
       }
     } catch (error) {
       setMessage({ type: 'error', text: 'Failed to save settings' });
