@@ -157,7 +157,7 @@ export class PriceMonitor {
   private async triggerAlert(alert: Alert, currentPrice: number, db: Db) {
     try {
       // Fetch user preferences
-      const userPrefs = await db.collection<UserPreferences>('user_preferences').findOne({
+      let userPrefs = await db.collection<UserPreferences>('user_preferences').findOne({
         userId: alert.userId,
       })
 
@@ -174,17 +174,14 @@ export class PriceMonitor {
         })
 
         // Fetch the newly created preferences
-        const newPrefs = await db.collection<UserPreferences>('user_preferences').findOne({
+        userPrefs = await db.collection<UserPreferences>('user_preferences').findOne({
           userId: alert.userId,
         })
 
-        if (!newPrefs) {
+        if (!userPrefs) {
           console.error(`[Price Monitor] Failed to create preferences for user ${alert.userId}`)
           return
         }
-
-        // Use the new preferences
-        userPrefs = newPrefs as any
       }
 
       // Build notification payload
