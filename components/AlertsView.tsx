@@ -362,7 +362,8 @@ export const AlertsView: React.FC = () => {
               />
             </div>
 
-            <div>
+            {/* Phone Number - DISABLED */}
+            {/* <div>
               <label className="block text-xs font-medium text-gray-300 mb-1">Phone Number</label>
               <input
                 type="tel"
@@ -372,12 +373,12 @@ export const AlertsView: React.FC = () => {
                 className="w-full px-3 py-2 bg-orbit-700 border border-orbit-600 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-orbit-accent"
               />
               <p className="text-xs text-gray-500 mt-1">Format: +[country code][number]</p>
-            </div>
+            </div> */}
 
             <div className="flex gap-2">
               <button
                 onClick={saveQuickSetup}
-                disabled={savingQuick || !quickEmail || !quickPhone}
+                disabled={savingQuick || !quickEmail}
                 className="flex-1 px-4 py-2 bg-orbit-accent hover:bg-orbit-accent/80 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {savingQuick ? 'Saving...' : 'Save & Enable Notifications'}
