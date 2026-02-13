@@ -20,7 +20,8 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, isMobileOpen, setIsMobileOpen }) => {
-  
+
+  // DEPLOYMENT DEBUG: This should appear in production - Build timestamp: 2026-02-12T18:00:00Z
   const navItems = [
     { id: AppView.DASHBOARD, label: 'Dashboard', icon: LayoutDashboard },
     { id: AppView.DAILY_BRIEF, label: 'Daily Brief', icon: FileText }, // Market Intelligence
@@ -29,6 +30,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, isM
     { id: AppView.ALERTS, label: 'Price Alerts', icon: Bell },
     { id: AppView.SETTINGS, label: 'Settings', icon: Settings },
   ];
+
+  // DIAGNOSTIC: Log navigation items to verify deployment
+  if (typeof window !== 'undefined') {
+    console.log('🔍 SIDEBAR DEPLOYED - Navigation items:', navItems.length, navItems.map(i => i.label));
+  }
 
   return (
     <>

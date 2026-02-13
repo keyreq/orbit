@@ -1,0 +1,20 @@
+DEPLOYMENT VERSION: 2026-02-12T18:00:00Z
+COMMIT: Daily Brief MUST be visible in sidebar
+CHANGE: Added diagnostic logging to Sidebar component
+
+This file is used to verify which version is deployed to production.
+If you see this file in your deployment, the latest code is deployed.
+
+Expected navigation items:
+1. Dashboard
+2. Daily Brief (THIS MUST BE VISIBLE)
+3. Intelligence Feed
+4. DeFi Portfolio
+5. Price Alerts
+6. Settings
+
+If Daily Brief is not visible, check:
+1. Vercel deployment logs for errors
+2. Browser console for diagnostic logs starting with "🔍 SIDEBAR DEPLOYED"
+3. Vercel dashboard to ensure correct GitHub branch is connected
+4. Clear Vercel build cache in project settings
