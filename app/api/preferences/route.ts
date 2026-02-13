@@ -12,38 +12,30 @@ import { requireAuth } from '@/lib/session'
 
 // Schema for user preferences
 const PreferencesSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .transform(val => val === '' ? undefined : val)
-    .pipe(z.string().email().optional())
-    .optional(),
-  phoneNumber: z
-    .string()
-    .trim()
-    .transform(val => val === '' ? undefined : val)
-    .pipe(
-      z.string()
-        .regex(/^\+[1-9]\d{1,14}$/, 'Phone number must be in E.164 format (e.g., +14155552671)')
-        .optional()
-    )
-    .optional(),
-  telegramChatId: z
-    .string()
-    .trim()
-    .transform(val => val === '' ? undefined : val)
-    .optional(),
-  slackWebhookUrl: z
-    .string()
-    .trim()
-    .transform(val => val === '' ? undefined : val)
-    .pipe(
-      z.string()
-        .url()
-        .startsWith('https://hooks.slack.com/', 'Must be a valid Slack webhook URL')
-        .optional()
-    )
-    .optional(),
+  email: z.union([
+    z.string().email('Invalid email format'),
+    z.literal(''),
+    z.undefined()
+  ]).optional().transform(val => val === '' ? undefined : val),
+
+  phoneNumber: z.union([
+    z.string().regex(/^\+[1-9]\d{1,14}$/, 'Phone number must be in E.164 format (e.g., +14155552671)'),
+    z.literal(''),
+    z.undefined()
+  ]).optional().transform(val => val === '' ? undefined : val),
+
+  telegramChatId: z.union([
+    z.string().min(1),
+    z.literal(''),
+    z.undefined()
+  ]).optional().transform(val => val === '' ? undefined : val),
+
+  slackWebhookUrl: z.union([
+    z.string().url().startsWith('https://hooks.slack.com/', 'Must be a valid Slack webhook URL'),
+    z.literal(''),
+    z.undefined()
+  ]).optional().transform(val => val === '' ? undefined : val),
+
   channels: z
     .array(z.enum(['in-app', 'email', 'sms', 'phone', 'telegram', 'slack']))
     .min(1)
