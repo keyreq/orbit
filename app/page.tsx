@@ -49,11 +49,11 @@ export default function HomePage() {
 
       <main className="flex-1 relative overflow-y-auto h-screen">
         {/* Mobile Header */}
-        <div className="lg:hidden flex items-center justify-between p-4 border-b border-orbit-600 bg-orbit-800 backdrop-blur sticky top-0 z-30">
+        <div className="lg:hidden flex items-center justify-between p-4 border-b border-orbit-600 bg-orbit-800 backdrop-blur sticky top-0 z-[120]">
           <div className="flex items-center">
             <button
               onClick={() => setIsMobileOpen(!isMobileOpen)}
-              className="p-3 -ml-2 text-gray-400 hover:text-white active:bg-orbit-700 rounded-lg transition-all touch-manipulation"
+              className="p-3 -ml-2 text-white hover:text-orbit-accent active:bg-orbit-700 rounded-lg transition-all touch-manipulation"
               aria-label={isMobileOpen ? "Close menu" : "Open menu"}
             >
               <Menu className="w-7 h-7" />
