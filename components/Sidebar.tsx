@@ -40,16 +40,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, isM
     <>
       {/* Mobile Overlay */}
       {isMobileOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
+        <div
+          className="fixed inset-0 bg-black/80 z-[100] lg:hidden backdrop-blur-md"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
 
       {/* Sidebar Container */}
       <aside className={`
-        fixed lg:static inset-y-0 left-0 z-50
-        w-64 bg-orbit-800 border-r border-orbit-600
+        fixed lg:static inset-y-0 left-0 z-[110]
+        w-64 bg-orbit-800 border-r border-orbit-600 shadow-2xl
         transform transition-transform duration-300 ease-in-out
         ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
