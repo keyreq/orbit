@@ -10,74 +10,12 @@ export const NewsFeed: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [macroAnalysis, setMacroAnalysis] = useState<string>('');
-  const [macroLoading, setMacroLoading] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
 
-    console.log('[NewsFeed] ⚡ Component mounted/updated');
-    console.log('[NewsFeed] userIdLoading:', userIdLoading);
-    console.log('[NewsFeed] userId:', userId);
-
-    // Fetch comprehensive macro analysis from Daily Brief
-    const fetchMacroAnalysis = async () => {
-      console.log('[NewsFeed] 🔄 Starting daily brief fetch...');
-      console.log('[NewsFeed] Current time:', new Date().toISOString());
-
-      setMacroLoading(true);
-
-      try {
-        const fetchStart = Date.now();
-        const response = await fetch('/api/daily-brief');
-        const fetchTime = Date.now() - fetchStart;
-
-        console.log('[NewsFeed] ✅ Daily brief response received');
-        console.log('[NewsFeed] Response status:', response.status);
-        console.log('[NewsFeed] Response time:', fetchTime + 'ms');
-        console.log('[NewsFeed] Response headers:', Object.fromEntries(response.headers.entries()));
-
-        const data = await response.json();
-        console.log('[NewsFeed] 📦 Daily brief data:', {
-          success: data.success,
-          hasData: !!data.data,
-          hasBrief: !!data.data?.brief,
-          briefLength: data.data?.brief?.length || 0,
-          error: data.error,
-          message: data.message
-        });
-
-        if (isMounted) {
-          if (data.success && data.data?.brief) {
-            setMacroAnalysis(data.data.brief);
-            console.log('[NewsFeed] ✅ Daily brief loaded successfully. Length:', data.data.brief.length);
-          } else {
-            const errorMsg = `⚠️ API Error: ${data.error || data.message || 'Unknown error'}`;
-            console.warn('[NewsFeed]', errorMsg);
-            setMacroAnalysis(`ERROR: ${data.error || data.message || 'Failed to load daily brief. Check Vercel logs.'}`);
-          }
-        }
-      } catch (err) {
-        console.error('[NewsFeed] ❌ Macro analysis fetch failed:', err);
-        console.error('[NewsFeed] Error details:', {
-          message: err instanceof Error ? err.message : String(err),
-          stack: err instanceof Error ? err.stack : undefined
-        });
-        if (isMounted) {
-          setMacroAnalysis(`ERROR: ${err instanceof Error ? err.message : 'Network error. Check your connection.'}`);
-        }
-      } finally {
-        if (isMounted) {
-          setMacroLoading(false);
-          console.log('[NewsFeed] 🏁 Daily brief fetch complete');
-        }
-      }
-    };
-
     // Fetch news
     const fetchNews = async () => {
-      console.log('[NewsFeed] 📰 Fetching news for query:', query);
-
       setLoading(true);
       setError(null);
 
@@ -123,10 +61,7 @@ export const NewsFeed: React.FC = () => {
       }
     };
 
-    // Always fetch daily brief (doesn't need userId)
-    fetchMacroAnalysis();
-
-    // Fetch news only when userId is ready
+    // Fetch news when userId is ready
     if (!userIdLoading && userId) {
       fetchNews();
     }
@@ -182,42 +117,6 @@ export const NewsFeed: React.FC = () => {
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
           </button>
         </form>
-      </div>
-
-      {/* Macro Analysis Section - ALWAYS VISIBLE */}
-      <div className="max-w-5xl mx-auto mb-8">
-        <div className="glass-panel p-6 rounded-2xl border border-orbit-accent/30 bg-orbit-800/50">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-white flex items-center">
-              <TrendingUp className="w-5 h-5 mr-2 text-orbit-accent" />
-              Daily Market Intelligence Brief
-            </h2>
-            {macroLoading && <Loader2 className="w-4 h-4 animate-spin text-orbit-accent" />}
-          </div>
-
-          {macroLoading ? (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-gray-400 text-sm">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Generating comprehensive market analysis...</span>
-              </div>
-              <div className="space-y-2 animate-pulse mt-4">
-                <div className="h-4 bg-orbit-600 rounded w-full"></div>
-                <div className="h-4 bg-orbit-600 rounded w-5/6"></div>
-                <div className="h-4 bg-orbit-600 rounded w-4/6"></div>
-              </div>
-            </div>
-          ) : macroAnalysis ? (
-            <div className="prose prose-invert prose-sm max-w-none text-gray-300 leading-relaxed">
-              <div className="whitespace-pre-wrap font-mono text-sm">{macroAnalysis}</div>
-            </div>
-          ) : (
-            <div className="text-center py-4">
-              <p className="text-gray-400 text-sm mb-2">Daily Brief is warming up...</p>
-              <p className="text-gray-500 text-xs">This can take 30-60 seconds on first load. Refresh the page to try again.</p>
-            </div>
-          )}
-        </div>
       </div>
 
       {/* Error Message */}
