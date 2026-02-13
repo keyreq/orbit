@@ -6,7 +6,6 @@ import {
   Bell,
   Settings,
   Activity,
-  Menu,
   FileText
 } from 'lucide-react';
 import { AppView } from '../types';
@@ -47,12 +46,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, isM
       )}
 
       {/* Sidebar Container */}
-      <aside className={`
+      <aside
+        style={{ backgroundColor: '#1a1f2e' }}
+        className={`
         fixed lg:static inset-y-0 left-0 z-[110]
-        w-64 bg-orbit-800 border-r border-orbit-600 shadow-2xl
+        w-64 border-r border-orbit-600 shadow-2xl
         transform transition-transform duration-300 ease-in-out
         ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-        opacity-100
       `}>
         <div className="flex flex-col h-full">
           {/* Logo */}
