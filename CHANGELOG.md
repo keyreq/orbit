@@ -6,6 +6,119 @@ All notable changes, decisions, and progress for the ORBIT project.
 
 ## [Unreleased]
 
+### 2026-02-13 - Mobile Menu Redesign & Email Notification Fixes
+
+#### 🎨 Mobile Menu Complete Redesign
+
+**Fixed Critical UX Issues:**
+- ✅ Floating hamburger (☰) button - fixed position, always visible when menu closed
+- ✅ Hamburger disappears when menu opens (smooth fade animation)
+- ✅ X button inside sidebar header for closing menu
+- ✅ Sidebar completely hidden when closed (no peeking button edges)
+- ✅ Fully opaque sidebar background (`#1a1f2e`) - no transparency
+- ✅ Proper z-index layering (hamburger: 120, sidebar: 110, overlay: 100)
+- ✅ Dark overlay (80% black with medium blur) when menu open
+- ✅ Tap outside or X button to close menu
+
+**Interaction Flow:**
+1. Tap floating hamburger → Menu slides in from left
+2. Hamburger fades out, X button appears in sidebar
+3. Tap X or dark area outside → Menu closes, hamburger reappears
+
+**Files Modified:**
+- `components/Sidebar.tsx` - Added X button, removed transparency
+- `app/page.tsx` - Moved hamburger to fixed floating button
+
+#### 📧 Email Notification System Improvements
+
+**Made Email/Phone Truly Optional:**
+- ✅ Fixed validation schema using union types (email, phone, telegram, slack)
+- ✅ Removed phone number requirement from UI (commented out temporarily)
+- ✅ Settings page now accepts email-only configuration
+- ✅ Empty strings automatically converted to `undefined`
+
+**Email Functionality:**
+- ✅ Added `/api/test-email` endpoint for testing email delivery
+- ✅ Created `RESEND_SETUP_GUIDE.md` with complete setup instructions
+- ✅ Fixed auto-creation of user preferences if missing
+- ✅ Email channel validation in notification settings
+
+**Files Created:**
+- `app/api/test-email/route.ts` - Test email endpoint
+- `RESEND_SETUP_GUIDE.md` - Resend API setup guide
+- `DIAGNOSE_EMAIL_ISSUE.md` - Email troubleshooting guide
+
+**Files Modified:**
+- `app/api/preferences/route.ts` - Union type validation for optional fields
+- `components/NotificationSettings.tsx` - Removed phone input, cleaned empty values
+- `components/AlertsView.tsx` - Removed phone requirement from Quick Setup modal
+
+#### 🐛 Critical Bug Fixes
+
+**Build Error Fix:**
+- ✅ Fixed `const` reassignment error in `lib/workers/price-monitor.ts`
+- ✅ Changed `const userPrefs` → `let userPrefs` for conditional assignment
+- ✅ Auto-creates default preferences (in-app only) for new users
+
+**Production Deployment Issue:**
+- ✅ Resolved Daily Brief not appearing in production sidebar
+- ✅ Issue was user testing preview URL instead of production URL
+- ✅ Added diagnostic logging to verify deployments
+- ✅ Created `DEPLOYMENT_VERSION.txt` for version tracking
+
+**Debug Tools Added:**
+- `/api/debug/check-alert-status` - Check alert and notification status
+- `/api/debug/trigger-alert` - Manually trigger price monitoring
+- Browser console diagnostic scripts in `DIAGNOSE_EMAIL_ISSUE.md`
+
+#### 🔒 Security Incident Resolved
+
+**Credential Exposure:**
+- ✅ MongoDB URI and Gemini API key exposed in `PRODUCTION_CHECKLIST.md`
+- ✅ Used `git filter-branch` to remove file from entire git history
+- ✅ Force pushed cleaned history to GitHub
+- ✅ Created `.gitleaks.toml` configuration for future secret detection
+- ✅ Created `SECURITY_INCIDENT_RESOLVED.md` with full incident report
+
+**Action Required:**
+- ⚠️  User must rotate MongoDB Atlas credentials
+- ⚠️  User must rotate Gemini API key
+- ⚠️  User must update Vercel environment variables
+
+**Files Created:**
+- `.gitleaks.toml` - Secret scanning configuration
+- `remove-secrets.sh` - Script for removing secrets from git history
+- `SECURITY_INCIDENT_RESOLVED.md` - Full incident documentation
+
+#### 📱 Mobile UX Improvements
+
+**Touch Interaction:**
+- ✅ Larger tap targets (28px × 28px icons)
+- ✅ Active state feedback on button presses
+- ✅ `touch-manipulation` CSS for better mobile responsiveness
+- ✅ Accessibility labels for screen readers
+
+**Visual Improvements:**
+- ✅ Mobile header fully opaque (100% solid background)
+- ✅ Hamburger button with border and shadow for visibility
+- ✅ Hover states with orbit-accent color
+- ✅ Smooth animations (300ms cubic-bezier transitions)
+
+#### 📝 Documentation Updates
+
+**New Guides:**
+- `RESEND_SETUP_GUIDE.md` - Complete Resend email service setup
+- `DIAGNOSE_EMAIL_ISSUE.md` - Step-by-step email troubleshooting
+- `DEPLOYMENT_VERSION.txt` - Version tracking for deployments
+- `SECURITY_INCIDENT_RESOLVED.md` - Security incident details
+
+**Updated Files:**
+- This changelog with comprehensive session notes
+
+---
+
+## [Previous Changes]
+
 ### 2026-02-12 - Simple localStorage-Based User Authentication
 
 #### 🔐 Authentication System - Zero Setup Required
